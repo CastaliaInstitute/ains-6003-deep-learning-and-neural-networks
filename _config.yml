@@ -1,0 +1,17 @@
+title: AINS6003 Deep Learning & Neural Networks
+author: Castalia Institute
+only_build_toc_files: true
+execute:
+  execute_notebooks: force
+launch_buttons:
+  thebe: true
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_admonition
+    - html_image
+sphinx:
+  config:
+    html_title: AINS6003 Deep Learning & Neural Networks

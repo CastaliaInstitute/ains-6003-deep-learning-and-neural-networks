@@ -1,0 +1,32 @@
+# AINS6003 Deep Learning & Neural Networks
+
+Jupyter Book course repository for **AINS6003** / Aurnova **AIN6003** — Deep Learning & Neural Networks.
+
+Structure follows [CastaliaInstitute/ains-6001-foundations-of-artificial-intelligence](https://github.com/CastaliaInstitute/ains-6001-foundations-of-artificial-intelligence) and the Jupyter Book / MyST pattern used in [CastaliaInstitute/aima](https://github.com/CastaliaInstitute/aima).
+
+## Contents
+
+- prose chapters per module
+- Thebe-enabled assignment notebooks
+- RISE-ready slide notebooks
+- slide narration and instructor notes
+- executable lab notebooks (Modules 1–8)
+
+## Local development
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+make html
+```
+
+## Export formats
+
+- `make html` — web book
+- `make pdf` — LaTeX PDF (CI also builds on push)
+- `make epub` — EPUB export
+
+## Publishing
+
+Push to `main` to publish via GitHub Pages (see `.github/workflows/pages.yml`).
