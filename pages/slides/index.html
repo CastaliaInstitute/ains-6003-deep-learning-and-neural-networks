@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jupyter Slides — AINS6003</title>
+    <meta name="description" content="AINS6003 module slide decks (Jupyter Book pages)" />
+    <link rel="stylesheet" href="../styles/site.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="back-link" href="../">← Course home</a>
+        <span class="site-pill">Jupyter Book · Slide pages</span>
+        <h1 class="site-title">AINS6003 Jupyter Slides</h1>
+        <p class="site-lede">
+          One HTML page per module, generated from <code>slides.ipynb</code> in the Jupyter Book build.
+          Scroll through slide sections in the browser, or open the notebook in JupyterLab with
+          <strong>RISE</strong> for live presentation.
+        </p>
+      </div>
+    </header>
+
+    <main class="site-main">
+      <section class="section" aria-labelledby="decks-h">
+        <h2 id="decks-h">Module decks (8)</h2>
+        <ul class="slide-list">
+          <li>
+            <a href="../book/modules/module-1/slides.html">
+              <span class="slide-list__num">Module 1</span>
+              <span class="slide-list__title">From neurons to multilayer networks</span>
+            </a>
+          </li>
+          <li>
+            <a href="../book/modules/module-2/slides.html">
+              <span class="slide-list__num">Module 2</span>
+              <span class="slide-list__title">Backpropagation and automatic differentiation</span>
+            </a>
+          </li>
+          <li>
+            <a href="../book/modules/module-3/slides.html">
+              <span class="slide-list__num">Module 3</span>
+              <span class="slide-list__title">Optimization, loss, and regularization</span>
+            </a>
+          </li>
+          <li>
+            <a href="../book/modules/module-4/slides.html">
+              <span class="slide-list__num">Module 4</span>
+              <span class="slide-list__title">Convolutional neural networks for vision</span>
+            </a>
+          </li>
+          <li>
+            <a href="../book/modules/module-5/slides.html">
+              <span class="slide-list__num">Module 5</span>
+              <span class="slide-list__title">Sequence models: RNNs and LSTMs</span>
+            </a>
+          </li>
+          <li>
+            <a href="../book/modules/module-6/slides.html">
+              <span class="slide-list__num">Module 6</span>
+              <span class="slide-list__title">Attention and transformers</span>
+            </a>
+          </li>
+          <li>
+            <a href="../book/modules/module-7/slides.html">
+              <span class="slide-list__num">Module 7</span>
+              <span class="slide-list__title">Generative models and applications</span>
+            </a>
+          </li>
+          <li>
+            <a href="../book/modules/module-8/slides.html">
+              <span class="slide-list__num">Module 8</span>
+              <span class="slide-list__title">GPU workflows, scale, and deployment</span>
+            </a>
+          </li>
+        </ul>
+        <p class="note">
+          Full course navigation (prose, assignments, labs, narration):
+          <a href="../book/intro.html">Jupyter Book</a>.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="how-h">
+        <h2 id="how-h">How these slides are built</h2>
+        <p class="note">
+          Slide notebooks use <code>slideshow</code> cell metadata (<code>slide_type: slide</code>).
+          CI runs <code>jupyter-book build</code> and deploys HTML under
+          <code>/book/modules/module-N/slides.html</code> on this site.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

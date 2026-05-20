@@ -1,6 +1,9 @@
 html:
 	jupyter-book build .
 
+site: html
+	bash scripts/stage-github-pages.sh
+
 pdf:
 	jupyter-book build . --builder pdflatex
 

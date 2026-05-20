@@ -27,7 +27,7 @@ jobs:
       - name: Build book
         run: make html
       - name: Stage site artifact
-        run: mkdir -p site && cp -R _build/html/. site/
+        run: bash scripts/stage-github-pages.sh
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

@@ -15,3 +15,4 @@ parse:
 sphinx:
   config:
     html_title: AINS6003 Deep Learning & Neural Networks
+    html_baseurl: https://castaliainstitute.github.io/ains-6003-deep-learning-and-neural-networks/book/

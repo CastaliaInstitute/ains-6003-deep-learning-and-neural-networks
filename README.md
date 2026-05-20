@@ -30,3 +30,13 @@ make html
 ## Publishing
 
 Push to `main` to publish via GitHub Pages (see `.github/workflows/pages.yml`).
+
+The deployed site has:
+
+- **Front page** — `index.html` (course hub, links to book and slides)
+- **Jupyter Slides index** — `slides/index.html` (links to each module `slides.html`)
+- **Jupyter Book** — `book/` (full course: prose, assignments, labs, slide pages)
+
+Preview locally: `make site` then open `site/index.html` (use a local server if book assets need correct paths).
+
+Live: https://castaliainstitute.github.io/ains-6003-deep-learning-and-neural-networks/
