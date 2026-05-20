@@ -39,4 +39,8 @@ The deployed site has:
 
 Preview locally: `make site` then open `site/index.html` (use a local server if book assets need correct paths).
 
-Live: https://castaliainstitute.github.io/ains-6003-deep-learning-and-neural-networks/
+**Canonical URL:** https://ains6003.courses.castalia.institute/ (Cloudflare-proxied CNAME → GitHub Pages).
+
+Fallback: https://castaliainstitute.github.io/ains-6003-deep-learning-and-neural-networks/
+
+See [docs/CUSTOM_DOMAIN.md](docs/CUSTOM_DOMAIN.md) for DNS, TLS, and Zero Trust Access.
