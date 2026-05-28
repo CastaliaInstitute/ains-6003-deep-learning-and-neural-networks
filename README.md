@@ -2,6 +2,8 @@
 
 Jupyter Book course repository for **AINS6003** / Aurnova **AIN6003** — Deep Learning & Neural Networks.
 
+[Open in GitHub Codespaces](https://codespaces.new/CastaliaInstitute/ains-6003-deep-learning-and-neural-networks)
+
 Structure follows [CastaliaInstitute/ains-6001-foundations-of-artificial-intelligence](https://github.com/CastaliaInstitute/ains-6001-foundations-of-artificial-intelligence) and the Jupyter Book / MyST pattern used in [CastaliaInstitute/aima](https://github.com/CastaliaInstitute/aima).
 
 ## Contents
@@ -24,6 +26,8 @@ make html
 ## Codespaces
 
 Open the repository in GitHub Codespaces to get a preconfigured Python/Jupyter environment. The Codespace installs `requirements.txt`, registers a `Python 3 (AINS6003)` kernel, and forwards ports for JupyterLab and local Jupyter Book previews.
+
+Launch link: https://codespaces.new/CastaliaInstitute/ains-6003-deep-learning-and-neural-networks
 
 Useful commands inside the Codespace:
 
