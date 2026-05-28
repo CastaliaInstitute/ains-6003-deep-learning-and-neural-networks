@@ -5,3 +5,5 @@ numpy
 torch
 RISE
 ipywidgets
+ipykernel
+jupyterlab

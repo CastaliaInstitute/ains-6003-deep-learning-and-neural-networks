@@ -21,6 +21,18 @@ pip install -r requirements.txt
 make html
 ```
 
+## Codespaces
+
+Open the repository in GitHub Codespaces to get a preconfigured Python/Jupyter environment. The Codespace installs `requirements.txt`, registers a `Python 3 (AINS6003)` kernel, and forwards ports for JupyterLab and local Jupyter Book previews.
+
+Useful commands inside the Codespace:
+
+```bash
+make html
+python -m http.server 8000 --directory _build/html
+jupyter lab --ip 0.0.0.0 --port 8888 --no-browser
+```
+
 ## Export formats
 
 - `make html` — web book

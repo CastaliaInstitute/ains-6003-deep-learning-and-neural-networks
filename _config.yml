@@ -1,6 +1,11 @@
 title: AINS6003 Deep Learning & Neural Networks
 author: Castalia Institute
 only_build_toc_files: true
+exclude_patterns:
+  - .venv/**
+  - _build/**
+  - site/**
+  - .devcontainer/**
 execute:
   execute_notebooks: force
 launch_buttons:
