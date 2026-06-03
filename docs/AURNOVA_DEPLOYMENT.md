@@ -58,6 +58,7 @@ Aurnova/ain6003-fall2026-m02-<github_username>
    - private repo
    - no Castalia CNAME or DNS configuration
    - no active Pages deploy workflow unless `--enable-pages` is requested
+   - no PDF/EPUB export workflow unless `--include-exports` is requested
    - contains cohort creation workflow
 5. Castalia/Aurnova operator confirms the instructor/customer has access in the Aurnova GitHub Enterprise organization.
 6. Operator or instructor runs `Create Aurnova Cohort` from the Aurnova instructor repo.

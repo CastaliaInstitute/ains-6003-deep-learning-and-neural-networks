@@ -85,3 +85,9 @@ It also removes the active Pages deploy workflow by default because private Page
 ```bash
 python scripts/aurnova/deploy_to_aurnova.py --live --enable-pages
 ```
+
+It removes the PDF/EPUB export workflow by default as well. To keep export CI in the Aurnova repo, run:
+
+```bash
+python scripts/aurnova/deploy_to_aurnova.py --live --include-exports
+```

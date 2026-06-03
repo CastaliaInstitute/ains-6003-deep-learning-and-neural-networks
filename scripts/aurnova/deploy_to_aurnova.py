@@ -51,6 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--live", action="store_true", help="Create/push the target repository")
     parser.add_argument("--force", action="store_true", help="Use --force-with-lease when pushing")
     parser.add_argument("--enable-pages", action="store_true", help="Keep Pages workflow and enable workflow-based Pages")
+    parser.add_argument("--include-exports", action="store_true", help="Keep PDF/EPUB export workflow")
     parser.add_argument("--skip-build", action="store_true", help="Skip make site validation")
     parser.add_argument("--keep-workdir", action="store_true", help="Keep the temporary deployment directory")
     return parser.parse_args()
@@ -88,7 +89,7 @@ def replace_text(path: Path, replacements: dict[str, str]) -> None:
     path.write_text(text)
 
 
-def sanitize(dest: Path, target_org: str, target_repo: str, *, enable_pages: bool) -> None:
+def sanitize(dest: Path, target_org: str, target_repo: str, *, enable_pages: bool, include_exports: bool) -> None:
     remove_paths = [
         "pages/CNAME",
         "docs/CUSTOM_DOMAIN.md",
@@ -98,6 +99,8 @@ def sanitize(dest: Path, target_org: str, target_repo: str, *, enable_pages: boo
     ]
     if not enable_pages:
         remove_paths.append(".github/workflows/pages.yml")
+    if not include_exports:
+        remove_paths.append(".github/workflows/exports.yml")
     for rel in remove_paths:
         path = dest / rel
         if path.exists():
@@ -234,7 +237,13 @@ def main() -> None:
         else:
             workdir.mkdir(parents=True, exist_ok=True)
         copy_source(workdir)
-        sanitize(workdir, args.target_org, args.target_repo, enable_pages=args.enable_pages)
+        sanitize(
+            workdir,
+            args.target_org,
+            args.target_repo,
+            enable_pages=args.enable_pages,
+            include_exports=args.include_exports,
+        )
         create_or_confirm_repo(args, dry_run=dry_run)
         if args.enable_pages:
             ensure_pages_enabled(args, dry_run=dry_run)
