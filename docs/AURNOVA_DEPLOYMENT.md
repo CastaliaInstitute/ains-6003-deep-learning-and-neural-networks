@@ -19,7 +19,7 @@ Private GitHub Pages access control is an Enterprise Cloud feature. Static Pages
 Canonical Aurnova repositories:
 
 ```text
-Aurnova/ain6003-course
+Aurnova/ain6003-instructor
 Aurnova/ain6003-assignment-m01
 Aurnova/ain6003-assignment-m02
 Aurnova/ain6003-assignment-m03
@@ -51,30 +51,32 @@ Aurnova/ain6003-fall2026-m02-<github_username>
 ## End-to-End Flow
 
 1. Customer purchases course access at `courses.castalia.institute`.
-2. Castalia/Aurnova operator provisions the customer into the Aurnova GitHub Enterprise organization.
-3. Operator creates or updates the canonical deliverable repo:
-   - `Aurnova/ain6003-course`
+2. Castalia payment/entitlement handling triggers the `Fulfill Aurnova Purchase` workflow in the Castalia source repository.
+3. The workflow runs `scripts/aurnova/deploy_to_aurnova.py`.
+4. The script builds the Jupyter Book, copies a sanitized source tree, creates or updates the Aurnova instructor repo, and pushes it to:
+   - `Aurnova/ain6003-instructor`
    - private repo
-   - private GitHub Pages enabled
+   - no Castalia CNAME or DNS configuration
    - contains cohort creation workflow
-4. Operator runs `Create Aurnova Cohort` from the canonical repo.
-5. The workflow creates:
+5. Castalia/Aurnova operator confirms the instructor/customer has access in the Aurnova GitHub Enterprise organization.
+6. Operator or instructor runs `Create Aurnova Cohort` from the Aurnova instructor repo.
+7. The workflow creates:
    - cohort course repo
    - cohort assignment template repos
    - instructor team
    - optional instructor GitHub memberships
-6. Instructor configures the cohort course repo secrets:
+8. Instructor configures the cohort course repo secrets:
    - `AURNOVA_GH_TOKEN`
    - `POPULI_API_BASE`
    - `POPULI_API_KEY`
    - optional `POPULI_COURSE_OFFERING_ID`
-7. Instructor runs roster sync from the cohort repo.
-8. Instructor reviews generated roster.
-9. Instructor runs assignment repo provisioning.
-10. Students are added directly as outside collaborators to the cohort course repo and to their own private assignment repos.
-11. Students open the cohort page, copy/start the assignment, and work in their own repo/Codespace.
-12. Autograding runs in each student repo.
-13. Instructor collects grade artifacts and posts grades back to Populi manually, by CSV, or later through LTI/Populi API automation.
+9. Instructor runs roster sync from the cohort repo.
+10. Instructor reviews generated roster.
+11. Instructor runs assignment repo provisioning.
+12. Students are added directly as outside collaborators to the cohort course repo and to their own private assignment repos.
+13. Students open the cohort page, copy/start the assignment, and work in their own repo/Codespace.
+14. Autograding runs in each student repo.
+15. Instructor collects grade artifacts and posts grades back to Populi manually, by CSV, or later through LTI/Populi API automation.
 
 ## Permission Model
 
@@ -97,6 +99,19 @@ Permissions:
 - direct `pull` access to the cohort course repo
 - direct `push` access only to the student's own generated assignment repos
 - no blanket team access to other students' assignment repos
+
+## DNS And Pages Boundary
+
+Castalia fulfillment does not configure customer DNS.
+
+The Aurnova instructor repo receives the course source, workflows, and GitHub Pages build configuration, but the deployment copy removes `pages/CNAME`. If the customer wants a custom domain, the customer or Aurnova operator must configure:
+
+- repository Pages settings
+- custom domain
+- DNS records
+- TLS/HTTPS enforcement
+
+This keeps Castalia fulfillment from claiming or modifying domains it does not own.
 
 ## Naming Rules
 
@@ -126,9 +141,11 @@ ain6003-fall2026-m01-jane-student
 
 This repo includes:
 
+- `.github/workflows/fulfill-aurnova-purchase.yml`
 - `.github/workflows/create-cohort.yml`
 - `.github/workflows/sync-populi-roster.yml`
 - `.github/workflows/create-student-assignment-repos.yml`
+- `scripts/aurnova/deploy_to_aurnova.py`
 - `scripts/aurnova/create_cohort.py`
 - `scripts/aurnova/sync_populi_roster.py`
 - `scripts/aurnova/create_student_assignment_repos.py`
@@ -140,11 +157,12 @@ The scripts are designed to run in dry-run mode first. They require explicit sec
 1. Confirm Aurnova GitHub Enterprise Cloud org name.
 2. Confirm that outside collaborators are enabled for the Aurnova organization.
 3. Confirm Populi tenant URL and API permissions.
-4. Confirm grade return path:
+4. Confirm whether the customer wants GitHub Pages enabled and which party owns DNS setup.
+5. Confirm grade return path:
    - manual Populi entry
    - Populi CSV import
    - Populi API
    - LTI 1.3 Assignment and Grade Services
-5. Decide whether assignment repos are one per module or one per student for the whole course.
+6. Decide whether assignment repos are one per module or one per student for the whole course.
 
 Recommendation: use one repo per student per module for clearer deadlines, autograding, and audit history.

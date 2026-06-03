@@ -50,3 +50,32 @@ Roster CSV columns:
 ```csv
 student_id,name,github_username,email
 ```
+
+## Deploy Castalia Source To Aurnova
+
+This is the fulfillment step after a customer purchases the course from
+`courses.castalia.institute`. The Castalia commerce system should dispatch the
+`Fulfill Aurnova Purchase` workflow with an order id; the workflow calls this
+script.
+
+Dry run:
+
+```bash
+python scripts/aurnova/deploy_to_aurnova.py
+```
+
+Live deploy:
+
+```bash
+python scripts/aurnova/deploy_to_aurnova.py --live
+```
+
+By default this deploys to:
+
+```text
+Aurnova/ain6003-instructor
+```
+
+The script runs `make site`, copies the source into a temporary deployment tree, removes the Castalia Pages CNAME, rewrites Aurnova workflow defaults to point at `Aurnova/ain6003-instructor`, creates the target repository if needed, commits the sanitized source tree, and pushes it.
+
+It does not configure DNS. Customer DNS, custom domains, and HTTPS policy are handled outside Castalia fulfillment.
