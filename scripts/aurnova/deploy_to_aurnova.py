@@ -32,6 +32,7 @@ EXCLUDE_DIRS = {
     ".pytest_cache",
 }
 EXCLUDE_SUFFIXES = {".pyc", ".pyo"}
+TEXT_SUFFIXES = {".md", ".html", ".yml", ".yaml", ".json", ".txt", ".css"}
 
 
 def run(args: list[str], cwd: Path, *, dry_run: bool = False) -> None:
@@ -87,23 +88,33 @@ def replace_text(path: Path, replacements: dict[str, str]) -> None:
 
 
 def sanitize(dest: Path, target_org: str, target_repo: str) -> None:
-    cname = dest / "pages" / "CNAME"
-    if cname.exists():
-        cname.unlink()
+    for rel in [
+        "pages/CNAME",
+        "docs/CUSTOM_DOMAIN.md",
+        "scripts/cf-dns-ains6003-github-pages.sh",
+        ".github/workflows/sync-dns.yml",
+        ".github/workflows/fulfill-aurnova-purchase.yml",
+    ]:
+        path = dest / rel
+        if path.exists():
+            path.unlink()
 
     canonical = f"{target_org}/{target_repo}"
     replacements = {
         "Aurnova/ain6003-course": canonical,
         "aurnova/ain6003-course": canonical,
+        "CastaliaInstitute/ains-6003-deep-learning-and-neural-networks": canonical,
+        "https://github.com/CastaliaInstitute/ains-6003-deep-learning-and-neural-networks": f"https://github.com/{canonical}",
+        "https://codespaces.new/CastaliaInstitute/ains-6003-deep-learning-and-neural-networks": f"https://codespaces.new/{canonical}",
+        "https://castaliainstitute.github.io/ains-6003-deep-learning-and-neural-networks/": "Aurnova private Pages URL",
         "Cloudflare-proxied CNAME \u2192 GitHub Pages": "private GitHub Pages in Aurnova",
         "https://ains6003.courses.castalia.institute/": "Aurnova private Pages URL",
+        "See [docs/CUSTOM_DOMAIN.md](docs/CUSTOM_DOMAIN.md) for DNS, TLS, and Zero Trust Access.": "Customer DNS, custom domains, and HTTPS policy are handled outside this instructor repository.",
+        "- `.github/workflows/fulfill-aurnova-purchase.yml`\n": "",
     }
-    for path in [
-        dest / "README.md",
-        dest / "docs" / "AURNOVA_DEPLOYMENT.md",
-        dest / ".github" / "workflows" / "create-cohort.yml",
-    ]:
-        replace_text(path, replacements)
+    for path in dest.rglob("*"):
+        if path.is_file() and path.suffix in TEXT_SUFFIXES:
+            replace_text(path, replacements)
 
 
 def repo_exists(owner: str, repo: str) -> bool:
@@ -138,14 +149,40 @@ def create_or_confirm_repo(args: argparse.Namespace, dry_run: bool) -> None:
     )
 
 
-def git_commit_and_push(dest: Path, args: argparse.Namespace, dry_run: bool) -> None:
+def clean_checkout(dest: Path) -> None:
+    for path in dest.iterdir():
+        if path.name == ".git":
+            continue
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
+
+
+def has_changes(dest: Path) -> bool:
+    result = subprocess.run(
+        ["git", "status", "--porcelain"],
+        cwd=dest,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    return bool(result.stdout.strip())
+
+
+def git_commit_and_push(dest: Path, args: argparse.Namespace, dry_run: bool, *, existing_repo: bool) -> None:
     remote = f"https://github.com/{args.target_org}/{args.target_repo}.git"
-    run(["git", "init", "-b", args.branch], dest, dry_run=dry_run)
+    if not existing_repo:
+        run(["git", "init", "-b", args.branch], dest, dry_run=dry_run)
     run(["git", "config", "user.name", "aurnova-deploy"], dest, dry_run=dry_run)
     run(["git", "config", "user.email", "automation@aurnova.ai"], dest, dry_run=dry_run)
     run(["git", "add", "."], dest, dry_run=dry_run)
+    if not dry_run and not has_changes(dest):
+        print("no deployment changes to commit")
+        return
     run(["git", "commit", "-m", "Deploy AINS6003 instructor course"], dest, dry_run=dry_run)
-    run(["git", "remote", "add", "origin", remote], dest, dry_run=dry_run)
+    if not existing_repo:
+        run(["git", "remote", "add", "origin", remote], dest, dry_run=dry_run)
     push = ["git", "push", "origin", args.branch]
     if args.force:
         push.append("--force-with-lease")
@@ -159,18 +196,25 @@ def main() -> None:
     if not args.skip_build:
         run(["make", "site"], ROOT, dry_run=False)
 
-    workdir = Path(tempfile.mkdtemp(prefix="ain6003-aurnova-deploy-"))
+    root_workdir = Path(tempfile.mkdtemp(prefix="ain6003-aurnova-deploy-"))
+    workdir = root_workdir / "repo"
     try:
-        print(f"deployment workdir: {workdir}")
+        print(f"deployment workdir: {root_workdir}")
+        exists = repo_exists(args.target_org, args.target_repo)
+        if args.live and exists:
+            run(["gh", "repo", "clone", f"{args.target_org}/{args.target_repo}", str(workdir)], ROOT)
+            clean_checkout(workdir)
+        else:
+            workdir.mkdir(parents=True, exist_ok=True)
         copy_source(workdir)
         sanitize(workdir, args.target_org, args.target_repo)
         create_or_confirm_repo(args, dry_run=dry_run)
-        git_commit_and_push(workdir, args, dry_run=dry_run)
+        git_commit_and_push(workdir, args, dry_run=dry_run, existing_repo=args.live and exists)
     finally:
         if args.keep_workdir:
-            print(f"kept deployment workdir: {workdir}")
+            print(f"kept deployment workdir: {root_workdir}")
         else:
-            shutil.rmtree(workdir, ignore_errors=True)
+            shutil.rmtree(root_workdir, ignore_errors=True)
 
 
 if __name__ == "__main__":
