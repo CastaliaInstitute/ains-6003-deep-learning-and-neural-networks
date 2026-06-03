@@ -60,3 +60,5 @@ Preview locally: `make site` then open `site/index.html` (use a local server if 
 Fallback: https://castaliainstitute.github.io/ains-6003-deep-learning-and-neural-networks/
 
 See [docs/CUSTOM_DOMAIN.md](docs/CUSTOM_DOMAIN.md) for DNS, TLS, and Zero Trust Access.
+
+See [docs/AURNOVA_DEPLOYMENT.md](docs/AURNOVA_DEPLOYMENT.md) for the Aurnova cohort, Populi roster, and student assignment repository provisioning model.
