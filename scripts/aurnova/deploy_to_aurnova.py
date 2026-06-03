@@ -50,6 +50,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--visibility", choices=["private", "public", "internal"], default="private")
     parser.add_argument("--live", action="store_true", help="Create/push the target repository")
     parser.add_argument("--force", action="store_true", help="Use --force-with-lease when pushing")
+    parser.add_argument("--enable-pages", action="store_true", help="Keep Pages workflow and enable workflow-based Pages")
     parser.add_argument("--skip-build", action="store_true", help="Skip make site validation")
     parser.add_argument("--keep-workdir", action="store_true", help="Keep the temporary deployment directory")
     return parser.parse_args()
@@ -87,14 +88,17 @@ def replace_text(path: Path, replacements: dict[str, str]) -> None:
     path.write_text(text)
 
 
-def sanitize(dest: Path, target_org: str, target_repo: str) -> None:
-    for rel in [
+def sanitize(dest: Path, target_org: str, target_repo: str, *, enable_pages: bool) -> None:
+    remove_paths = [
         "pages/CNAME",
         "docs/CUSTOM_DOMAIN.md",
         "scripts/cf-dns-ains6003-github-pages.sh",
         ".github/workflows/sync-dns.yml",
         ".github/workflows/fulfill-aurnova-purchase.yml",
-    ]:
+    ]
+    if not enable_pages:
+        remove_paths.append(".github/workflows/pages.yml")
+    for rel in remove_paths:
         path = dest / rel
         if path.exists():
             path.unlink()
@@ -144,6 +148,29 @@ def create_or_confirm_repo(args: argparse.Namespace, dry_run: bool) -> None:
             "AINS6003 instructor-facing course repository",
             "--disable-wiki",
         ],
+        ROOT,
+        dry_run=dry_run,
+    )
+
+
+def ensure_pages_enabled(args: argparse.Namespace, dry_run: bool) -> None:
+    full_name = f"{args.target_org}/{args.target_repo}"
+    result = subprocess.run(
+        ["gh", "api", f"repos/{full_name}/pages"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode == 0:
+        print(f"pages exists: {full_name}")
+        run(
+            ["gh", "api", "-X", "PUT", f"repos/{full_name}/pages", "-f", "build_type=workflow"],
+            ROOT,
+            dry_run=dry_run,
+        )
+        return
+    run(
+        ["gh", "api", "-X", "POST", f"repos/{full_name}/pages", "-f", "build_type=workflow"],
         ROOT,
         dry_run=dry_run,
     )
@@ -207,8 +234,10 @@ def main() -> None:
         else:
             workdir.mkdir(parents=True, exist_ok=True)
         copy_source(workdir)
-        sanitize(workdir, args.target_org, args.target_repo)
+        sanitize(workdir, args.target_org, args.target_repo, enable_pages=args.enable_pages)
         create_or_confirm_repo(args, dry_run=dry_run)
+        if args.enable_pages:
+            ensure_pages_enabled(args, dry_run=dry_run)
         git_commit_and_push(workdir, args, dry_run=dry_run, existing_repo=args.live and exists)
     finally:
         if args.keep_workdir:

@@ -79,3 +79,9 @@ Aurnova/ain6003-instructor
 The script runs `make site`, copies the source into a temporary deployment tree, removes the Castalia Pages CNAME, rewrites Aurnova workflow defaults to point at `Aurnova/ain6003-instructor`, creates the target repository if needed, commits the sanitized source tree, and pushes it.
 
 It does not configure DNS. Customer DNS, custom domains, and HTTPS policy are handled outside Castalia fulfillment.
+
+It also removes the active Pages deploy workflow by default because private Pages support depends on the customer's GitHub plan. To keep the Pages workflow and attempt to enable workflow-based Pages, run:
+
+```bash
+python scripts/aurnova/deploy_to_aurnova.py --live --enable-pages
+```

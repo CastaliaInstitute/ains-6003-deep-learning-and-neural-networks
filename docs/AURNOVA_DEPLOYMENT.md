@@ -57,6 +57,7 @@ Aurnova/ain6003-fall2026-m02-<github_username>
    - `Aurnova/ain6003-instructor`
    - private repo
    - no Castalia CNAME or DNS configuration
+   - no active Pages deploy workflow unless `--enable-pages` is requested
    - contains cohort creation workflow
 5. Castalia/Aurnova operator confirms the instructor/customer has access in the Aurnova GitHub Enterprise organization.
 6. Operator or instructor runs `Create Aurnova Cohort` from the Aurnova instructor repo.
@@ -104,8 +105,9 @@ Permissions:
 
 Castalia fulfillment does not configure customer DNS.
 
-The Aurnova instructor repo receives the course source, workflows, and GitHub Pages build configuration, but the deployment copy removes `pages/CNAME`. If the customer wants a custom domain, the customer or Aurnova operator must configure:
+The Aurnova instructor repo receives the course source and provisioning workflows. By default, the deployment copy removes `pages/CNAME` and the active Pages deploy workflow because private Pages support depends on the customer's GitHub plan. If the customer wants GitHub Pages or a custom domain, the customer or Aurnova operator must configure:
 
+- a GitHub plan that supports Pages for the target repository visibility
 - repository Pages settings
 - custom domain
 - DNS records
@@ -157,12 +159,13 @@ The scripts are designed to run in dry-run mode first. They require explicit sec
 1. Confirm Aurnova GitHub Enterprise Cloud org name.
 2. Confirm that outside collaborators are enabled for the Aurnova organization.
 3. Confirm Populi tenant URL and API permissions.
-4. Confirm whether the customer wants GitHub Pages enabled and which party owns DNS setup.
-5. Confirm grade return path:
+4. Confirm whether the customer has a GitHub plan that supports Pages for private repositories.
+5. Confirm whether the customer wants GitHub Pages enabled and which party owns DNS setup.
+6. Confirm grade return path:
    - manual Populi entry
    - Populi CSV import
    - Populi API
    - LTI 1.3 Assignment and Grade Services
-6. Decide whether assignment repos are one per module or one per student for the whole course.
+7. Decide whether assignment repos are one per module or one per student for the whole course.
 
 Recommendation: use one repo per student per module for clearer deadlines, autograding, and audit history.
